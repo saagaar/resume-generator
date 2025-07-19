@@ -1,0 +1,96 @@
+Senior Software Engineer
+Full-time
+AU
+Hybrid
+
+We’re Kanopi. Welcome.
+
+Kanopi is a data-driven insurtech that pushes the boundaries of how insurance is delivered. Some of the world’s largest insurers come to us for reliable, flexible technology to create cover that protects and adapts to customers’ changing needs.
+
+At Kanopi, we live by our values every day:
+
+Human: We treat people like people — with empathy, curiosity, and respect — whether they’re teammates, customers, partners, or end users.
+
+Dependable: We make sure you can always count on us, and we rely on you to do the same.
+
+Intentional: We act with purpose — making thoughtful decisions that stay true to our mission and lead to meaningful outcomes.
+
+Driven: We care deeply about what we do — always pushing ourselves to grow, improve, and reach ambitious goals.
+
+Impactful: We create positive change through everything we do — from the big picture to the small things that matter.
+
+Do you want to join an engineering team that has a meaningful impact on the world? Do you want to use your passion for software architecture to build an amazing product? Then we’ve found the right person to be part of our journey.
+
+Please note: this is a hybrid role, and while we have a preference for candidates based in Melbourne, we are looking for the very best - so if this sounds like you, please still apply. Roles are based in Australia, and we are not currently hiring anyone based overseas.
+
+The role
+As a Senior Software Engineer, you will play a key role in designing, developing and scaling our platform in a startup environment. Beyond writing high-quality code, you will lead technical discussions, mentor engineers and make architectural decisions that balance scalability, maintainability and user experience.
+
+Success in this role means delivering incrementally and efficiently, making thoughtful trade-offs between technical complexity and product design to maximise impact. You will work closely with the product manager and engineering team to build robust, secure and maintainable software while ensuring best practices in architecture, security and testing.
+
+This is an opportunity to shape the future of our platform and contribute to a fast-moving and innovative business.
+
+The tech
+The technology is current and inherently exciting. In order to kick goals, you will need to be comfortable operating within these technologies and practices:
+
+Programming Languages: TypeScript, Python.
+
+Frameworks & Libraries: React, Node.js, Django.
+
+Infrastructure & Tooling: AWS, Terraform, CI/CD pipelines.
+
+Development Environment: MacBook (provided).
+
+Demonstrated Agile experience is important, and we’d love to hear if you’ve worked with Test-Driven Development processes before. Bonus points if you know your way around design systems, and if you’ve worked on API integrations. 
+
+What you will do every day
+Design and develop new features and improvements with a focus on scalability and security.
+
+Make key architectural decisions that support maintainability and performance.
+
+Support and mentor mid-level engineers, reviewing code and sharing knowledge.
+
+Contribute to technical strategy, ensuring that engineering efforts align with business objectives.
+
+Improve CI/CD pipelines, testing frameworks and overall development processes.
+
+Collaborate in an adaptive and iterative agile process that values feedback, transparency and shared ownership.
+
+What you will bring to the role
+
+At least six years of professional software development experience.
+
+A strong background in designing scalable software architectures.
+
+Experience mentoring engineers and providing technical guidance.
+
+A track record of working in teams that prioritise communication, trust and adaptability.
+
+Why Join Us?
+Influence technical decisions and help shape the future of our platform.
+
+Work on meaningful projects that solve real problems for users.
+
+Take ownership of architectural improvements and contribute to a growing engineering culture.
+
+Don’t stop reading yet
+If you’re excited about this role but aren’t sure if you tick all our boxes, please send in your application anyway. We know from research that women and other people from underrepresented, minority, or marginalised backgrounds often only apply if they think they meet all the criteria, but please don’t let that stop you from applying. We’d really love to hear from you and to see what unique skills and experience you’d bring to the role, even if it is not everything we have listed above.
+
+Benefits
+Things you might want to know about us:
+
+We offer a warm and collaborative work culture with big time vision. Our aim is to create an environment in which everyone is included in decisions and opportunities, regardless of your role, age, or how long you've been with the company. Everyone's opinion is welcome, and we're firm believers in discussions and radical candor.
+
+Equity package as a valued member of the company. Remove if not applicable for the role.
+
+We trust our people. This means we focus on outcomes and provide a truly flexible workplace. So if you need some time to go to the gym during quiet times, want to break up your day to look after your kids, or feel like going for a walk around that 3pm slump, it’s all fine. We have team members around the globe, so you may need to attend an early morning or early evening meeting occasionally.
+
+You will work alongside an experienced team who will challenge you everyday (and expect you to challenge them back). 
+
+We’re big fans of learning new things, which is why we give you the support and professional development to help you achieve your career goals, learn and grow. We offer time and support to take courses, read books, or attend events, and we have a career development framework in place.
+
+We value flexible work and healthy boundaries. That’s why we support the right to disconnect. While some after-hours availability may occasionally be required — for example, to respond to critical system issues, urgent client queries, or time-sensitive project needs — we aim to keep this to a minimum and always prioritise balance.
+
+Remote restrictions
+Workday must overlap by at least 8 hours with Melbourne VIC, Australia
+Must be a resident of Australia
