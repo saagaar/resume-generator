@@ -1,0 +1,48 @@
+**Tailored Resume:**
+
+Sagar Chapagain
+Software Engineer
+
+**Summary:**
+Highly experienced software engineer with 8+ years of expertise in web development, specializing in TypeScript, Python, and PHP. Proven track record of delivering scalable solutions, leading technical discussions, and mentoring engineers.
+
+**Technical Skills:**
+* Programming Languages: TypeScript, Python, PHP
+* Frameworks & Libraries: React, Node.js, Django
+* Infrastructure & Tooling: AWS, Terraform, CI/CD pipelines
+* Development Environment: MacBook (provided)
+
+**Work Experience:**
+
+**Contract Full-Stack Engineer**, Outback Yak (Dec 2024 - Present)
+
+* Designed and developed a scalable LMS, integrating Clerk authentication, Stripe for payments, and a custom payload CMS for seamless content management
+* Optimized cloud infrastructure on AWS, cutting downtime by 40% and improving system reliability
+* Led technical discussions, mentored engineers, and made architectural decisions that balanced scalability, maintainability, and user experience
+
+**Senior Software Engineer**, E-Multitech Solutions (Sep 2016 - Aug 2018)
+
+* Delivered 12+ projects for clients across various regions, including auction platforms and real-time bidding solutions
+* Developed and deployed REST APIs for mobile applications, integrated third-party APIs, and ensured code quality and consistency
+* Conducted code reviews, mentored junior developers, and ensured code is maintained to its quality and consistency
+
+**Additional Suggestions:**
+
+* **Skills to strengthen alignment with the role:**
+	+ Experience with Agile frameworks and Test-Driven Development processes
+	+ Knowledge of design systems and API integrations
+* **Certifications or courses to pursue:**
+	+ AWS Certified Solution Architect Associate
+	+ Agile and Scrum certification
+* **Specific projects or experiences to develop:**
+	+ Developing a machine learning algorithm using Python to predict the price of a used car
+	+ Implementing and working on a hybrid role, prioritizing communication, trust, and adaptability
+
+**Certifications:**
+
+* AWS Certified Solution Architect Associate
+
+**Education:**
+
+* Bachelor's Degree, Tribhuvan University, Nepal
+* Master's in Economics (Econometrics major), Tribhuvan University, Nepal
