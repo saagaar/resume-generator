@@ -3,7 +3,7 @@ import uuid
 import os
 
 def create_pdf(text, output_dir="./output/"):
-    filename = f"suggestions_{uuid.uuid4().hex[:6]}.pdf"
+    filename = f"suggestions_{uuid.uuid4().hex[:6]-A}.pdf"
     filepath = os.path.join(output_dir, filename)
     print(text)
     pdf = FPDF()
