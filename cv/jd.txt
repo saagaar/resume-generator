@@ -33,11 +33,11 @@ This is an opportunity to shape the future of our platform and contribute to a f
 The tech
 The technology is current and inherently exciting. In order to kick goals, you will need to be comfortable operating within these technologies and practices:
 
-Programming Languages: TypeScript, Python.
+Programming Languages: Java, Python.
 
-Frameworks & Libraries: React, Node.js, Django.
+Frameworks & Libraries: Angular, Node.js,   Grails.
 
-Infrastructure & Tooling: AWS, Terraform, CI/CD pipelines.
+Infrastructure & Tooling: AWS, GIthubaction, CI/CD pipelines.
 
 Development Environment: MacBook (provided).
 

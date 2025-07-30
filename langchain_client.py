@@ -55,28 +55,30 @@ def generate_suggestions_deepseek(resume_text, jd_text, user_notes=""):
 
     return result
 
-def generate_suggestions_openrouter(resume_text, jd_text, user_notes=""):
+def generate_suggestions_openrouter(resume_text='', jd_text='', user_notes=""):
     try:
         api_key = os.getenv("OPENROUTER_API_KEY")
         api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
         model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3-8b-instruct")
         if not api_key:
             raise ValueError("OPENROUTER_API_KEY is not set in environment")
-
+        print(api_key);
         llm = ChatOpenAI(
             model="meta-llama/llama-3-8b-instruct",  # Or any other available model
             temperature=0.5,
-            openai_api_key=os.getenv("OPENROUTER_API_KEY"),
+            openai_api_key= api_key,
             openai_api_base="https://openrouter.ai/api/v1"
         ) # type: ignore
 
         prompt = get_prompt()
+        
+        print('*****Prompt','*****Promptend')
         filled_prompt = prompt.format(
             resume=resume_text,
-            job=jd_text,
+            job=jd_text,    
             notes=user_notes
         )  
-       
+        print('%%%%',filled_prompt,'%%%%');
         if prompt is None:
             raise ValueError("Prompt is None. Check get_prompt() implementation.")
     
@@ -94,4 +96,9 @@ def test():
 
 if __name__ == "__main__":
     import sys
-    generate_suggestions_openrouter()
+    dummy_resume = "Experienced backend developer with expertise in Python and cloud infrastructure."
+    dummy_jd = "We're hiring a Python developer familiar with AWS and scalable systems."
+    dummy_notes = "Emphasize experience with REST APIs and CI/CD pipelines."
+    result = generate_suggestions_openrouter(dummy_resume, dummy_jd, dummy_notes)
+    print(result)
+    test()  

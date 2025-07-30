@@ -6,4 +6,7 @@ openai
 python-docx 
 PyPDF2 
 fpdf 
+dotenv
 python-dotenv
+langchain-openai
+

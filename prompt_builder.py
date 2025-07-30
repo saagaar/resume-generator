@@ -26,6 +26,7 @@ Give specific, actionable feedback.
 
 
 def get_prompt():
+    print('hi there')
     template = """You are a professional resume optimization expert specializing in tailoring resumes to specific job descriptions. Your goal is to optimize my resume and provide actionable suggestions for improvement to align with the target role.
 
 ### Guidelines:
