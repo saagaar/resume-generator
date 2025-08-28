@@ -33,8 +33,8 @@ def get_prompt():
 1. **Relevance**:  
    - Prioritize experiences, skills, and achievements **most relevant to the job description**.  
    - Remove or de-emphasize irrelevant details to ensure a **concise** and **targeted** resume.
-   - Limit work experience section to 2-3 most relevant roles
-   - Limit bullet points under each role to 2-3 most relevant impacts
+   - Limit work experience section to 2 most relevant roles
+   - Limit bullet points under each role to 2 most relevant impacts
 
 2. **Action-Driven Results**:  
    - Use **strong action verbs** and **quantifiable results** (e.g., percentages, revenue, efficiency improvements) to highlight impact.  
