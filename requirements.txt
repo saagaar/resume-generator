@@ -10,4 +10,4 @@ dotenv
 python-dotenv
 langchain-openai
 langchain-google-genai
-
+ipywidgets
