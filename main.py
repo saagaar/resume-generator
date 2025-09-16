@@ -184,13 +184,22 @@ async def convertAndStreamCVToJson():
     chain = prompt | llm
 
     async def generate():
-        async for event in chain.astream({
-            "resume_text": resume_text,
-            "schema_content": json.dumps(schema, indent=2)
-        }):
-            if event.type == "token":
-                token = event.content
-                yield token  # 👈 stream chunk directly to client
+            try:
+                async for chunk in chain.astream({
+                    "resume_text": resume_text,
+                    "schema_content": json.dumps(schema, indent=2)
+                }):
+                    # Check the actual structure of chunk
+                    if hasattr(chunk, 'content'):
+                        content = chunk.content
+                    else:
+                        content = str(chunk)
+                    
+                    # Yield as bytes for streaming
+                    yield f"{content}".encode('utf-8')
+                    
+            except Exception as e:
+                yield f"Error: {str(e)}".encode('utf-8')
     return StreamingResponse(generate(), media_type="text/plain")
 
 @app.get("/suggestions")    
