@@ -13,14 +13,18 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi import FastAPI, File, UploadFile
+import shutil
+UPLOAD_DIR = "data/"
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR) 
 
 
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,16 +46,30 @@ def index():
         yield "Generating best suggestions based on job description...\n"
         getSuggestionsOnSkillSetJson()
         yield f"Suggestions ready: \n"
-        yield "Generating bio...\n"
-        async for chunk in getBio():
-            yield chunk
+        
         # experience=getExperience()
         # skillset()
         # resumeReviewer()
         
     return StreamingResponse(default_flow(), media_type="text/plain")
+@app.post("/upload/")
+async def upload_file(file: UploadFile = File(...)):
+    async def event_generator():
+        yield "File is uploading...\n"
+        
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+
+        with open(file_path, "wb") as buffer:
+            while chunk := file.file.read(1024 * 1024):  # 1 MB chunks
+                buffer.write(chunk)
+
+        yield "File uploaded successfully.\n"
+
+    return StreamingResponse(event_generator(), media_type="text/plain")
+
 def convertCVToJson():
-    resume_text = extract_text("cv/my_cv.pdf")
+    resume_text = extract_text(UPLOAD_DIR+"/my_cv.pdf")
   # api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
   # model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3-8b-instruct")
   # Following steps to workout tomoorow
@@ -124,7 +142,7 @@ def convertCVToJson():
     # Parse model output
     try:
             suggestions = json.loads(content)
-            filename='cv/cv.json';
+            filename=UPLOAD_DIR+'/cv.json';
             with open(filename, "w") as file:
                 json.dump(suggestions, file, indent=2)
             return (json.dumps(suggestions, indent=2)) 
@@ -134,7 +152,7 @@ def convertCVToJson():
     
 @app.get("/cv")
 async def convertAndStreamCVToJson():
-    resume_text = extract_text("cv/my_cv.pdf")
+    resume_text = extract_text(UPLOAD_DIR+"/my_cv.pdf")
   # api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
   # model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3-8b-instruct")
   # Following steps to workout tomoorow
@@ -270,28 +288,109 @@ def getSuggestionsOnSkillSetJson():
   except json.JSONDecodeError:
       return ("❌ Model returned invalid JSON:")
       # print(result.content)   
-
 @app.get("/bio")    
-async def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file="cv/jd.txt"):
-    context_file='cv/context_memory.json'
-    conversation_history = []
-    cv_data={}
-    suggestion_data={}
-    jd_text=""
-    context_memory={}   
+# def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file="cv/jd.txt"):
+#     context_file='cv/context_memory.json'
+#     conversation_history = []
+#     cv_data={}
+#     suggestion_data={}
+#     jd_text=""
+#     context_memory={}   
+#     with open(cv_file, "r") as f:
+#         cv_data = json.load(f)
+#     with open(suggestion_file, "r") as f:
+#         suggestion_data = json.load(f)
+#     with open(jd_file, "r") as f:
+#         jd_text = f.read().strip()
+#     if os.path.exists("cv/context_memory.json"):
+#         with open(context_file, "r") as f:
+#             context_memory = f.read().strip()
+#     if context_memory=={}:
+#          with open(context_file, "w") as file   :
+#             context_memory={'cv_data':cv_data,'suggestions':suggestion_data,'job_description':jd_text,'qna':[]  }
+#             json.dump(context_memory, file, indent=2)
+#     llm = ChatGoogleGenerativeAI(
+#         model="gemini-2.5-flash",
+#         temperature=0.3,
+#         max_tokens=None,
+#         timeout=None,
+#         max_retries=2,
+#     )
+#     with open(context_file, "r") as f:
+#         full_context = f.read().strip()
+#     # System prompt for the LLM
+#     system_prompt ="""You are an expert resume analyst and HR professional in tech.
+#     You have access to:
+#     - Candidate CV (skills, achievements)
+#     - Recruiter suggestions (role-specific advice, ATS keywords)
+#     - Job description
+#     Task:
+#     1. Ask the candidate clarifying questions one at a time to collect information for a personal statement.
+#     2. Only ask questions you need to generate a polished 150-word personal statement.
+#     3. Wait for candidate’s answer before asking the next question.
+#     4. Make sure you have asked not more than 3 question that makes the best use of information for the given job description
+#     5. Once you have enough info, output the final statement starting with "FINAL_STATEMENT:".
+#     6. Include relevant ATS keywords. Use a professional but human tone.
+#     """
+#     human_prompt = """
+#     Here is all available information about the candidate:
+#     {merged_context}
+#     Please generate the next clarifying question for the candidate, or output FINAL_STATEMENT: if you have enough information.
+#     """
+#     finalprompt = ChatPromptTemplate.from_messages([
+#         ("system", system_prompt),
+#         ("human", human_prompt)
+#     ])
+#     chain = finalprompt | llm
+#     def generate(context_memory):
+#          for event in chain.astream({"merged_context": json.dumps(context_memory)}):
+           
+#             if event.type == "token":
+#                  token= event.content.strip();
+#                  yield 'k xa mathi ko solti ko hal khabar'
+#                  if not token:
+#                     continue
+#                  if "FINAL_STATEMENT:" in token:
+#                     final_statement = token.split("FINAL_STATEMENT:")[1].strip()
+#                     with open(context_file, "r+") as f: 
+#                         context_memory = f.read().strip()
+#                     context_memory = json.loads(context_memory)
+#                     context_memory['updated_cv']['bio'] = final_statement
+#                     with open(context_file, "w") as f:
+#                         json.dump(context_memory, f, indent=2)
+#                     yield f"FINAL:{final_statement}\n"
+#                  else:   
+#                    yield 'k xa solti hal khabar'
+#                 #    await asyncio.to_thread(update_qna, question=token.strip())
+#                    yield token 
+#     return StreamingResponse(generate(context_memory),'text/plain')
+def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file="cv/jd.txt"):
+    context_file = "cv/context_memory.json"
+    yield "Analyzing your profile and optimizing suggestions...\n"
+    # Load CV, suggestions, JD
     with open(cv_file, "r") as f:
         cv_data = json.load(f)
     with open(suggestion_file, "r") as f:
         suggestion_data = json.load(f)
     with open(jd_file, "r") as f:
         jd_text = f.read().strip()
-    if os.path.exists("cv/context_memory.json"):
+
+    # Load or create context
+    if os.path.exists(context_file):
         with open(context_file, "r") as f:
-            context_memory = f.read().strip()
-    if context_memory=={}:
-         with open(context_file, "w") as file   :
-            context_memory={'cv_data':cv_data,'suggestions':suggestion_data,'job_description':jd_text,'qna':[]  }
-            json.dump(context_memory, file, indent=2)
+            context_memory = json.load(f)
+    else:
+        context_memory = {
+            "cv_data": cv_data,
+            "suggestions": suggestion_data,
+            "job_description": jd_text,
+            "qna": [],
+            "updated_cv": {}
+        }
+        with open(context_file, "w") as f:
+            json.dump(context_memory, f, indent=2)
+
+    # LLM setup
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
         temperature=0.3,
@@ -299,10 +398,8 @@ async def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd
         timeout=None,
         max_retries=2,
     )
-    with open(context_file, "r") as f:
-        full_context = f.read().strip()
-    # System prompt for the LLM
-    system_prompt ="""You are an expert resume analyst and HR professional in tech.
+
+    system_prompt = """You are an expert resume analyst and HR professional in tech.
     You have access to:
     - Candidate CV (skills, achievements)
     - Recruiter suggestions (role-specific advice, ATS keywords)
@@ -311,65 +408,41 @@ async def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd
     1. Ask the candidate clarifying questions one at a time to collect information for a personal statement.
     2. Only ask questions you need to generate a polished 150-word personal statement.
     3. Wait for candidate’s answer before asking the next question.
-    4. Make sure you have asked not more than 3 question that makes the best use of information for the given job description
+    4. Make sure you have asked not more than 3 questions.
     5. Once you have enough info, output the final statement starting with "FINAL_STATEMENT:".
     6. Include relevant ATS keywords. Use a professional but human tone.
     """
+
     human_prompt = """
     Here is all available information about the candidate:
     {merged_context}
     Please generate the next clarifying question for the candidate, or output FINAL_STATEMENT: if you have enough information.
     """
+
     finalprompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         ("human", human_prompt)
     ])
+
     chain = finalprompt | llm
-    # async def generate(context_memory):
-    #     async for event in chain.astream({"merged_context": json.dumps(context_memory)}):
-           
-    #         if event.type == "token":
-    #              token= event.content.strip();
-    #              yield 'k xa mathi ko solti ko hal khabar'
-    #              if not token:
-    #                 continue
-    #              if "FINAL_STATEMENT:" in token:
-    #                 final_statement = token.split("FINAL_STATEMENT:")[1].strip()
-    #                 with open(context_file, "r+") as f: 
-    #                     context_memory = f.read().strip()
-    #                 context_memory = json.loads(context_memory)
-    #                 context_memory['updated_cv']['bio'] = final_statement
-    #                 with open(context_file, "w") as f:
-    #                     json.dump(context_memory, f, indent=2)
-    #                 yield f"FINAL:{final_statement}\n"
-    #              else:   
-    #                yield 'k xa solti hal khabar'
-    #                await asyncio.to_thread(update_qna, question=token.strip())
-    #                yield token 
-    # return generate(context_memory)
-    fulltext='';
-    async for event in chain.astream({"merged_context": json.dumps(context_memory)}):
-        if event.type == "AIMessageChunk":
-            token = event.content.strip()
-            fulltext+=token
-            # yield f"{token}"    
-            if not token:
-                continue
-            if "FINAL_STATEMENT:" in token:
-                if os.path.exists("cv/context_memory.json"):
-                    with open("cv/context_memory.json", "r") as f:
-                        context_memory = json.loads(f.read().strip())
-                final_statement = token.split("FINAL_STATEMENT:")[1].strip()
-                context_memory['updated_cv'] = context_memory.get('updated_cv', {})
-                context_memory['updated_cv']['bio'] = final_statement
-                await asyncio.to_thread(lambda: json.dump(context_memory, open(context_file, "w"), indent=2))
-                yield f"\nFINAL:{final_statement}\n"
-            else:
-               
-                # await asyncio.to_thread(update_qna, question=token)
-                yield token
-   
-    await asyncio.to_thread(update_qna, question=fulltext)
+
+    def generate(context_memory):
+        for event in chain.astream({"merged_context": json.dumps(context_memory)}):
+            if event.type == "token":
+                token = event.content.strip()
+                if not token:
+                    continue
+
+                if "FINAL_STATEMENT:" in token:
+                    final_statement = token.split("FINAL_STATEMENT:")[1].strip()
+                    context_memory["updated_cv"]["bio"] = final_statement
+                    with open(context_file, "w") as f:
+                        json.dump(context_memory, f, indent=2)
+                    yield f"FINAL:{final_statement}\n"
+                else:
+                    yield token
+
+    return generate(context_memory)
     
   
 @app.get("/answer") 

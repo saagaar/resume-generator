@@ -1,3 +1,9 @@
 cvenv/*
 .qodo/*
 cv/*
+data/*
+__pycache__/*
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3           
