@@ -1,4 +1,6 @@
 import asyncio
+from pathlib import Path
+from time import sleep
 from typing import Union
 
 from fastapi import FastAPI
@@ -19,8 +21,6 @@ UPLOAD_DIR = "data/"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR) 
 
-
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -39,34 +39,61 @@ def getLLM():
     )
 @app.get("/")
 def index():
+    return {"message": "Welcome to the Resume Generator API"}
+@app.get("/default")
+def default():
     async def default_flow():
         yield "CV extracting: JSON...\n"
         convertCVToJson()
         yield f"CV JSON generated: \n"
         yield "Generating best suggestions based on job description...\n"
-        getSuggestionsOnSkillSetJson()
+        generateSuggestionsOnSkillSetJson()
         yield f"Suggestions ready: \n"
-        
         # experience=getExperience()
         # skillset()
         # resumeReviewer()
         
     return StreamingResponse(default_flow(), media_type="text/plain")
-@app.post("/upload/")
+@app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    async def event_generator():
-        yield "File is uploading...\n"
-        
-        os.makedirs(UPLOAD_DIR, exist_ok=True)
-        file_path = os.path.join(UPLOAD_DIR, file.filename)
+    total_size = int(file.headers.get("content-length", 0))
 
-        with open(file_path, "wb") as buffer:
-            while chunk := file.file.read(1024 * 1024):  # 1 MB chunks
-                buffer.write(chunk)
+    uploaded = 0
+    os.makedirs("uploads", exist_ok=True)
+    file_extension = Path(file.filename).suffix
+    file_path = os.path.join("data", 'my_cv' + file_extension)
 
-        yield "File uploaded successfully.\n"
+    # yield "data: Starting upload...\n\n"
 
-    return StreamingResponse(event_generator(), media_type="text/plain")
+    with open(file_path, "wb") as buffer:
+        chunk_size = 1024 * 1024
+        while chunk := await file.read(chunk_size):
+            buffer.write(chunk)
+            uploaded += len(chunk)
+            percent = (uploaded / total_size) * 100 if total_size else 0
+            # yield f"data: Uploaded {percent:.2f}%\n\n"
+            await asyncio.sleep(0)
+        async def event_generator():
+
+            yield "data: ✅ File uploaded successfully.\n\n"
+            yield "data: Converting file to JSON...\n\n"
+            response=convertCVToJson()
+            # yield "data: ✅ CV JSON generated.\n\n{response}\n\n"
+            # yield "data: Generating suggestions based on job description...\n\n"
+            # await asyncio.sleep(1)
+            generateSuggestionsOnSkillSetJson()
+            yield "data: Generating suggestions...\n\n"
+            # await asyncio.sleep(1)
+            # yield "data: ✅ Process complete.\n\n"
+
+            # Final message to close SSE gracefully
+            # yield "event: close\ndata: done\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+@app.post("/message")
+
+
 
 def convertCVToJson():
     resume_text = extract_text(UPLOAD_DIR+"/my_cv.pdf")
@@ -125,6 +152,7 @@ def convertCVToJson():
     - Only return valid JSON.
     - Never use Markdown, code blocks, or ```json fencing.
     - Output raw JSON only.
+    - if the content is not available let the user know that following field is missing in the resume
 
     CV TEXT:
     {resume_text}
@@ -234,7 +262,7 @@ async def convertAndStreamCVToJson():
       print(result.content)
 
 @app.get("/suggestions")    
-def getSuggestionsOnSkillSetJson():
+def generateSuggestionsOnSkillSetJson():
   jd=(read_file('cv/jd.txt'))
   skillset= {
                 "resume_improvements": "string - general advice on content, structure, tone, formatting",
