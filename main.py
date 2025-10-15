@@ -392,9 +392,9 @@ def generateSuggestionsOnSkillSetJson():
 #                 #    await asyncio.to_thread(update_qna, question=token.strip())
 #                    yield token 
 #     return StreamingResponse(generate(context_memory),'text/plain')
-def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file="cv/jd.txt"):
+async def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file="cv/jd.txt"):
     context_file = "cv/context_memory.json"
-    yield "Analyzing your profile and optimizing suggestions...\n"
+    # yield "Analyzing your profile and optimizing suggestions...\n"
     # Load CV, suggestions, JD
     with open(cv_file, "r") as f:
         cv_data = json.load(f)
@@ -440,13 +440,12 @@ def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file=
     5. Once you have enough info, output the final statement starting with "FINAL_STATEMENT:".
     6. Include relevant ATS keywords. Use a professional but human tone.
     """
-
+    
     human_prompt = """
     Here is all available information about the candidate:
     {merged_context}
     Please generate the next clarifying question for the candidate, or output FINAL_STATEMENT: if you have enough information.
     """
-
     finalprompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         ("human", human_prompt)
@@ -454,8 +453,8 @@ def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file=
 
     chain = finalprompt | llm
 
-    def generate(context_memory):
-        for event in chain.astream({"merged_context": json.dumps(context_memory)}):
+    async def generate(context_memory):
+        async for event in chain.astream({"merged_context": json.dumps(context_memory)}):
             if event.type == "token":
                 token = event.content.strip()
                 if not token:
@@ -464,14 +463,16 @@ def getBio(cv_file="cv/cv.json", suggestion_file="cv/suggestions.json", jd_file=
                 if "FINAL_STATEMENT:" in token:
                     final_statement = token.split("FINAL_STATEMENT:")[1].strip()
                     context_memory["updated_cv"]["bio"] = final_statement
+
                     with open(context_file, "w") as f:
                         json.dump(context_memory, f, indent=2)
+
                     yield f"FINAL:{final_statement}\n"
                 else:
                     yield token
 
-    return generate(context_memory)
-    
+    return StreamingResponse(generate(context_memory), media_type="text/event-stream")
+
   
 @app.get("/answer") 
 def submit_answer(answer: str, index=None):
